@@ -37,7 +37,7 @@ $(eval $(call validate-option,VERSION,jp us eu sh))
 
 ifeq      ($(VERSION),jp)
   DEFINES   += VERSION_JP=1
-  OPT_FLAGS := -g
+  OPT_FLAGS := -Ofast
   GRUCODE   ?= f3d_old
   VERSION_JP_US  ?= true
 else ifeq ($(VERSION),us)
@@ -101,7 +101,7 @@ ifeq      ($(COMPILER),ido)
 else ifeq ($(COMPILER),gcc)
   NON_MATCHING := 1
   MIPSISET     := -mips3
-  OPT_FLAGS    := -O2
+  OPT_FLAGS    := -Ofast
 endif
 
 
@@ -488,21 +488,21 @@ TEXTURE_ENCODING := u8
 # Convert PNGs to RGBA32, RGBA16, IA16, IA8, IA4, IA1, I8, I4 binary files
 $(BUILD_DIR)/%: %.png
 	$(call print,Converting:,$<,$@)
-	$(V)$(N64GRAPHICS) -s raw -i $@ -g $< -f $(lastword $(subst ., ,$@))
+	$(V)$(N64GRAPHICS) -s raw -i $@ -Ofast $< -f $(lastword $(subst ., ,$@))
 
 $(BUILD_DIR)/%.inc.c: %.png
 	$(call print,Converting:,$<,$@)
-	$(V)$(N64GRAPHICS) -s $(TEXTURE_ENCODING) -i $@ -g $< -f $(lastword ,$(subst ., ,$(basename $<)))
+	$(V)$(N64GRAPHICS) -s $(TEXTURE_ENCODING) -i $@ -Ofast $< -f $(lastword ,$(subst ., ,$(basename $<)))
 
 # Color Index CI8
 $(BUILD_DIR)/%.ci8: %.ci8.png
 	$(call print,Converting:,$<,$@)
-	$(V)$(N64GRAPHICS_CI) -i $@ -g $< -f ci8
+	$(V)$(N64GRAPHICS_CI) -i $@ -Ofast $< -f ci8
 
 # Color Index CI4
 $(BUILD_DIR)/%.ci4: %.ci4.png
 	$(call print,Converting:,$<,$@)
-	$(V)$(N64GRAPHICS_CI) -i $@ -g $< -f ci4
+	$(V)$(N64GRAPHICS_CI) -i $@ -Ofast $< -f ci4
 
 
 #==============================================================================#
@@ -654,49 +654,49 @@ $(BUILD_DIR)/%.o: $(BUILD_DIR)/%.c
 
 # Alternate compiler flags needed for matching
 ifeq ($(COMPILER),ido)
-  $(BUILD_DIR)/levels/%/leveldata.o: OPT_FLAGS := -g
-  $(BUILD_DIR)/actors/%.o:           OPT_FLAGS := -g
-  $(BUILD_DIR)/bin/%.o:              OPT_FLAGS := -g
-  $(BUILD_DIR)/src/goddard/%.o:      OPT_FLAGS := -g
+  $(BUILD_DIR)/levels/%/leveldata.o: OPT_FLAGS := -Ofast
+  $(BUILD_DIR)/actors/%.o:           OPT_FLAGS := -Ofast
+  $(BUILD_DIR)/bin/%.o:              OPT_FLAGS := -Ofast
+  $(BUILD_DIR)/src/goddard/%.o:      OPT_FLAGS := -Ofast
   $(BUILD_DIR)/src/goddard/%.o:      MIPSISET := -mips1
-  $(BUILD_DIR)/lib/src/%.o:          OPT_FLAGS :=
-  $(BUILD_DIR)/lib/src/math/%.o:     OPT_FLAGS := -O2
-  $(BUILD_DIR)/lib/src/math/ll%.o:   OPT_FLAGS :=
+  $(BUILD_DIR)/lib/src/%.o:          OPT_FLAGS := -Ofast
+  $(BUILD_DIR)/lib/src/math/%.o:     OPT_FLAGS := -Ofast
+  $(BUILD_DIR)/lib/src/math/ll%.o:   OPT_FLAGS := -Ofast
   $(BUILD_DIR)/lib/src/math/ll%.o:   MIPSISET := -mips3 -32
-  $(BUILD_DIR)/lib/src/ldiv.o:       OPT_FLAGS := -O2
-  $(BUILD_DIR)/lib/src/string.o:     OPT_FLAGS := -O2
-  $(BUILD_DIR)/lib/src/gu%.o:        OPT_FLAGS := -O3
-  $(BUILD_DIR)/lib/src/al%.o:        OPT_FLAGS := -O3
+  $(BUILD_DIR)/lib/src/ldiv.o:       OPT_FLAGS := -Ofast
+  $(BUILD_DIR)/lib/src/string.o:     OPT_FLAGS := -Ofast
+  $(BUILD_DIR)/lib/src/gu%.o:        OPT_FLAGS := -Ofast
+  $(BUILD_DIR)/lib/src/al%.o:        OPT_FLAGS := -Ofast
 
   ifeq ($(VERSION),sh)
-    $(BUILD_DIR)/lib/src/_Ldtob.o:   OPT_FLAGS := -O3
-    $(BUILD_DIR)/lib/src/_Litob.o:   OPT_FLAGS := -O3
-    $(BUILD_DIR)/lib/src/_Printf.o:  OPT_FLAGS := -O3
-    $(BUILD_DIR)/lib/src/sprintf.o:  OPT_FLAGS := -O3
-    $(BUILD_DIR)/lib/src/osDriveRomInit.o: OPT_FLAGS := -g
+    $(BUILD_DIR)/lib/src/_Ldtob.o:   OPT_FLAGS := -Ofast
+    $(BUILD_DIR)/lib/src/_Litob.o:   OPT_FLAGS := -Ofast
+    $(BUILD_DIR)/lib/src/_Printf.o:  OPT_FLAGS := -Ofast
+    $(BUILD_DIR)/lib/src/sprintf.o:  OPT_FLAGS := -Ofast
+    $(BUILD_DIR)/lib/src/osDriveRomInit.o: OPT_FLAGS := -Ofast
   endif
   ifeq ($(VERSION),eu)
-    $(BUILD_DIR)/lib/src/_Ldtob.o:   OPT_FLAGS := -O3
-    $(BUILD_DIR)/lib/src/_Litob.o:   OPT_FLAGS := -O3
-    $(BUILD_DIR)/lib/src/_Printf.o:  OPT_FLAGS := -O3
-    $(BUILD_DIR)/lib/src/sprintf.o:  OPT_FLAGS := -O3
+    $(BUILD_DIR)/lib/src/_Ldtob.o:   OPT_FLAGS := -Ofast
+    $(BUILD_DIR)/lib/src/_Litob.o:   OPT_FLAGS := -Ofast
+    $(BUILD_DIR)/lib/src/_Printf.o:  OPT_FLAGS := -Ofast
+    $(BUILD_DIR)/lib/src/sprintf.o:  OPT_FLAGS := -Ofast
 
     # For all audio files other than external.c and port_eu.c, put string literals
     # in .data. (In Shindou, the port_eu.c string literals also moved to .data.)
-    $(BUILD_DIR)/src/audio/%.o:        OPT_FLAGS := -O2 -use_readwrite_const
-    $(BUILD_DIR)/src/audio/port_eu.o:  OPT_FLAGS := -O2
+    $(BUILD_DIR)/src/audio/%.o:        OPT_FLAGS := -Ofast -use_readwrite_const
+    $(BUILD_DIR)/src/audio/port_eu.o:  OPT_FLAGS := -Ofast
   endif
   ifeq ($(VERSION_JP_US),true)
-    $(BUILD_DIR)/src/audio/%.o:        OPT_FLAGS := -O2 -Wo,-loopunroll,0
-    $(BUILD_DIR)/src/audio/load.o:     OPT_FLAGS := -O2 -Wo,-loopunroll,0 -framepointer
+    $(BUILD_DIR)/src/audio/%.o:        OPT_FLAGS := -Ofast -Wo,-loopunroll,0
+    $(BUILD_DIR)/src/audio/load.o:     OPT_FLAGS := -Ofast -Wo,-loopunroll,0 -framepointer
     # The source-to-source optimizer copt is enabled for audio. This makes it use
     # acpp, which needs -Wp,-+ to handle C++-style comments.
     # All other files than external.c should really use copt, but only a few have
     # been matched so far.
-    $(BUILD_DIR)/src/audio/effects.o:   OPT_FLAGS := -O2 -Wo,-loopunroll,0 -sopt,-inline=sequence_channel_process_sound,-scalaroptimize=1 -Wp,-+
-    $(BUILD_DIR)/src/audio/synthesis.o: OPT_FLAGS := -O2 -Wo,-loopunroll,0 -sopt,-scalaroptimize=1 -Wp,-+
+    $(BUILD_DIR)/src/audio/effects.o:   OPT_FLAGS := -Ofast -Wo,-loopunroll,0 -sopt,-inline=sequence_channel_process_sound,-scalaroptimize=1 -Wp,-+
+    $(BUILD_DIR)/src/audio/synthesis.o: OPT_FLAGS := -Ofast -Wo,-loopunroll,0 -sopt,-scalaroptimize=1 -Wp,-+
   endif
-  $(BUILD_DIR)/src/audio/external.o: OPT_FLAGS := -O2 -Wo,-loopunroll,0
+  $(BUILD_DIR)/src/audio/external.o: OPT_FLAGS := -Ofast -Wo,-loopunroll,0
 
 # Add a target for build/eu/src/audio/*.copt to make it easier to see debug
 $(BUILD_DIR)/src/audio/%.acpp: src/audio/%.c
